@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Tony's Company — Tecnología & Electrodomésticos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --black: #111111;
+      --green: #1e8a3c;
+      --green2: #25a849;
+      --gray: #6b7280;
+      --light: #f5f5f5;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Barlow', sans-serif; background: var(--light); color: var(--black); }
+
+    /* ── HEADER ── */
+    header {
+      background: var(--black);
+      padding: 0 36px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 68px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.5);
+    }
+
+    /* LOGO — fondo blanco redondeado, tamaño controlado */
+    .logo-wrap { display: flex; align-items: center; text-decoration: none; }
+    .logo-wrap img {
+      height: 42px;           /* ← altura del logo en el header */
+      width: auto;
+      background: white;
+      padding: 5px 14px;      /* espacio interno alrededor del logo */
+      border-radius: 8px;     /* esquinas redondeadas */
+      object-fit: contain;
+    }
+
+    .header-right { display: flex; align-items: center; gap: 16px; }
+    .search-wrap { position: relative; }
+    .search-wrap input {
+      padding: 9px 16px 9px 38px;
+      border-radius: 25px;
+      border: 2px solid #2a2a2a;
+      background: #1a1a1a;
+      color: white;
+      width: 220px;
+      font-family: 'Barlow', sans-serif;
+      font-size: 14px;
+      transition: border-color 0.2s;
+    }
+    .search-wrap input::placeholder { color: #666; }
+    .search-wrap input:focus { outline: none; border-color: var(--green); }
+    .search-wrap .icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #666; font-size: 14px; }
+    .cart-btn {
+      background: var(--green);
+      color: white;
+      text-decoration: none;
+      padding: 9px 20px;
+      border-radius: 25px;
+      font-weight: 600;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.2s;
+    }
+    .cart-btn:hover { background: var(--green2); }
+    .cart-badge {
+      background: white;
+      color: var(--green);
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    /* ── NAV ── */
+    nav {
+      background: #181818;
+      padding: 0 36px;
+      display: flex;
+      gap: 0;
+      align-items: center;
+      border-bottom: 1px solid #222;
+    }
+    nav button {
+      background: transparent;
+      color: #777;
+      border: none;
+      padding: 14px 22px;
+      cursor: pointer;
+      font-family: 'Barlow', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      transition: color 0.2s;
+      white-space: nowrap;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -1px;
+    }
+    nav button:hover { color: #ddd; }
+    nav button.active { color: var(--green); border-bottom-color: var(--green); }
+
+    /* ── HERO ── */
+    .hero {
+      background: var(--black);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 64px 80px;
+      gap: 60px;
+      min-height: 340px;
+      position: relative;
+      overflow: hidden;
+    }
+    /* efecto de luz verde sutil al fondo */
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 75% 50%, rgba(30,138,60,0.14) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    /* línea decorativa izquierda */
+    .hero::after {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 4px;
+      background: var(--green);
+    }
+
+    .hero-text { flex: 1; position: relative; z-index: 1; }
+    .hero-eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .hero-eyebrow::before {
+      content: '';
+      display: inline-block;
+      width: 24px;
+      height: 2px;
+      background: var(--green);
+    }
+    .hero h1 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: clamp(38px, 4.5vw, 62px);
+      font-weight: 900;
+      color: white;
+      line-height: 0.95;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+      letter-spacing: -1px;
+    }
+    .hero h1 span { color: var(--green); }
+    .hero p {
+      color: #888;
+      font-size: 15px;
+      line-height: 1.7;
+      max-width: 400px;
+      margin-bottom: 32px;
+    }
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--green);
+      color: white;
+      padding: 13px 30px;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 13px;
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .hero-cta:hover { background: var(--green2); transform: translateY(-2px); }
+
+    /* LOGO HERO — elegante, no muy grande */
+    .hero-logo { flex-shrink: 0; position: relative; z-index: 1; }
+    .hero-logo img {
+      width: clamp(160px, 15vw, 240px);  /* ← tamaño del logo en la portada */
+      height: auto;
+      background: white;
+      padding: 20px 30px;               /* espacio interno */
+      border-radius: 12px;
+      object-fit: contain;
+      box-shadow:
+        0 4px 6px rgba(0,0,0,0.3),
+        0 20px 50px rgba(0,0,0,0.4),
+        0 0 0 1px rgba(255,255,255,0.05);
+    }
+
+    /* ── STATS BAR ── */
+    .stats-bar {
+      background: var(--green);
+      display: flex;
+      justify-content: center;
+      gap: 0;
+    }
+    .stat {
+      text-align: center;
+      color: white;
+      padding: 16px 50px;
+      border-right: 1px solid rgba(255,255,255,0.15);
+    }
+    .stat:last-child { border-right: none; }
+    .stat-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 28px;
+      font-weight: 900;
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      opacity: 0.8;
+      margin-top: 3px;
+    }
+
+    /* ── PRODUCTOS ── */
+    .products-section { max-width: 1280px; margin: 54px auto; padding: 0 28px; }
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 28px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    .section-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 30px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .section-title span { color: var(--green); }
+    .results-count { color: var(--gray); font-size: 13px; }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
+
+    /* ── CARD ── */
+    .card {
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+      transition: transform 0.25s, box-shadow 0.25s;
+      border: 1px solid #f0f0f0;
+    }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.13); }
+    .card-img-wrap { position: relative; height: 185px; background: #f8f8f8; overflow: hidden; }
+    .card-img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.35s; }
+    .card:hover .card-img-wrap img { transform: scale(1.05); }
+    .badge {
+      position: absolute; top: 10px; left: 10px;
+      background: var(--green); color: white;
+      padding: 3px 10px; border-radius: 3px;
+      font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .badge.tech { background: #1d4ed8; }
+    .badge.linea { background: #7c3aed; }
+    .stock-low {
+      position: absolute; top: 10px; right: 10px;
+      background: #dc2626; color: white;
+      padding: 3px 9px; border-radius: 3px;
+      font-size: 10px; font-weight: 700;
+    }
+    .card-body { padding: 15px 16px 16px; }
+    .card-body h4 { font-size: 15px; font-weight: 600; margin-bottom: 6px; line-height: 1.35; color: #1a1a1a; }
+    .card-body .price {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 28px; font-weight: 900;
+      color: var(--green); margin-bottom: 12px; line-height: 1;
+    }
+    .add-btn {
+      width: 100%; padding: 10px;
+      background: var(--black); color: white;
+      border: none; border-radius: 6px;
+      font-family: 'Barlow', sans-serif;
+      font-weight: 700; font-size: 13px;
+      cursor: pointer; text-transform: uppercase;
+      letter-spacing: 0.8px;
+      transition: background 0.2s;
+    }
+    .add-btn:hover { background: var(--green); }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed; bottom: 28px; right: 28px;
+      background: #1a1a1a; color: white;
+      padding: 13px 20px; border-radius: 8px;
+      font-size: 14px; font-weight: 600;
+      border-left: 4px solid var(--green);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.35);
+      transform: translateY(80px); opacity: 0;
+      transition: all 0.3s; z-index: 999;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--black);
+      padding: 36px 20px 28px;
+      margin-top: 70px;
+      text-align: center;
+      border-top: 3px solid var(--green);
+    }
+    /* LOGO FOOTER — pequeño y discreto */
+    footer img {
+      height: 34px;            /* ← tamaño del logo en el footer */
+      width: auto;
+      background: white;
+      padding: 4px 14px;
+      border-radius: 6px;
+      object-fit: contain;
+      opacity: 0.8;
+      display: block;
+      margin: 0 auto 14px;
+    }
+    footer p { color: #666; font-size: 13px; }
+    footer a { color: var(--green); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      header { padding: 0 18px; height: 60px; }
+      .logo-wrap img { height: 34px; }
+      .hero { flex-direction: column; padding: 44px 24px 48px; text-align: center; min-height: auto; gap: 36px; }
+      .hero::after { display: none; }
+      .hero-eyebrow { justify-content: center; }
+      .hero p { max-width: 100%; }
+      .hero-logo img { width: 160px; padding: 14px 22px; }
+      .stat { padding: 14px 24px; }
+      .stats-bar { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <a href="index.html" class="logo-wrap">
+    <img src="/portada.JPG" alt="Tony's Company">
+  </a>
+  <div class="header-right">
+    <div class="search-wrap">
+      <span class="icon">🔍</span>
+      <input type="text" id="search-input" placeholder="Buscar productos...">
+    </div>
+    <a href="cart.html" class="cart-btn">
+      🛒 Carrito <span class="cart-badge" id="cart-count">0</span>
+    </a>
+  </div>
+</header>
+
+<!-- NAV CATEGORÍAS -->
+<nav>
+  <button class="active" data-cat="todos" onclick="filterCategory('todos',this)">Todos</button>
+  <button data-cat="tecnologia" onclick="filterCategory('tecnologia',this)">📱 Tecnología</button>
+  <button data-cat="electrodomesticos" onclick="filterCategory('electrodomesticos',this)">🍳 Electrodomésticos</button>
+  <button data-cat="linea_blanca" onclick="filterCategory('linea_blanca',this)">🏠 Línea Blanca</button>
+</nav>
+
+<!-- HERO / PORTADA -->
+<div class="hero">
+  <div class="hero-text">
+    <p class="hero-eyebrow">Calidad garantizada</p>
+    <h1>Tecnología &amp;<br><span>Electrodomésticos</span></h1>
+    <p>Los mejores productos para tu hogar. Venta en local físico, entrega a domicilio y coordinación por WhatsApp.</p>
+    <a href="#productos" class="hero-cta">Ver catálogo →</a>
+  </div>
+  <div class="hero-logo">
+    <img src="/portada.JPG" alt="Tony's Company">
+  </div>
+</div>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stat"><div class="stat-num">500+</div><div class="stat-label">Productos</div></div>
+  <div class="stat"><div class="stat-num">5★</div><div class="stat-label">Calificación</div></div>
+  <div class="stat"><div class="stat-num">24h</div><div class="stat-label">Entrega</div></div>
+  <div class="stat"><div class="stat-num">10+</div><div class="stat-label">Años</div></div>
+</div>
+
+<!-- PRODUCTOS -->
+<section class="products-section" id="productos">
+  <div class="section-header">
+    <h2 class="section-title">Productos <span>Disponibles</span></h2>
+    <span class="results-count" id="results-count"></span>
+  </div>
+  <div id="products-container" class="grid"></div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <img src="/portada.JPG" alt="Tony's Company">
+  <p>© 2026 <a href="#">Tony's Company</a> — Catálogo digital &nbsp;|&nbsp; Venta en local físico y a domicilio</p>
+</footer>
+
+<!-- TOAST NOTIFICACIÓN -->
+<div class="toast" id="toast"></div>
+
+<script>
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+let allProducts = [];
+
+const container   = document.getElementById("products-container");
+const cartCount   = document.getElementById("cart-count");
+const searchInput = document.getElementById("search-input");
+const resultsCount= document.getElementById("results-count");
+const toast       = document.getElementById("toast");
+
+// ── Cargar productos desde API o demo ──
+async function loadProducts() {
+  try {
+    const res = await fetch("/api/products");
+    allProducts = await res.json();
+  } catch(e) {
+    // Productos de demo si no hay servidor
+    allProducts = [
+      {_id:"p1",nombre:"Smart TV 50''",precio:450,category:"tecnologia",existencias:5,image:"https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=400&h=300&fit=crop"},
+      {_id:"p2",nombre:"Refrigeradora LG 18 pies",precio:820,category:"linea_blanca",existencias:3,image:"https://images.unsplash.com/photo-1571175443880-49e1d25b2bc5?w=400&h=300&fit=crop"},
+      {_id:"p3",nombre:"Licuadora Oster 6 velocidades",precio:75,category:"electrodomesticos",existencias:10,image:"https://images.unsplash.com/photo-1570222094114-d054a817e56b?w=400&h=300&fit=crop"},
+      {_id:"p4",nombre:"Laptop HP Core i5",precio:699,category:"tecnologia",existencias:4,image:"https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400&h=300&fit=crop"},
+      {_id:"p5",nombre:"Lavadora Samsung 16kg",precio:560,category:"linea_blanca",existencias:2,image:"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop"},
+      {_id:"p6",nombre:"Microondas Panasonic 1200W",precio:120,category:"electrodomesticos",existencias:8,image:"https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=400&h=300&fit=crop"},
+      {_id:"p7",nombre:"iPhone 15 128GB",precio:999,category:"tecnologia",existencias:6,image:"https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=400&h=300&fit=crop"},
+      {_id:"p8",nombre:"Aire Acondicionado 12000BTU",precio:750,category:"linea_blanca",existencias:3,image:"https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=400&h=300&fit=crop"}
+    ];
+  }
+  renderProducts(allProducts);
+}
+
+// ── Mostrar productos en pantalla ──
+function renderProducts(products) {
+  container.innerHTML = "";
+  resultsCount.textContent = products.length + " producto" + (products.length !== 1 ? "s" : "");
+
+  if (!products.length) {
+    container.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:80px;color:#aaa"><div style="font-size:48px;margin-bottom:16px">🔍</div><h3 style="color:#333;margin-bottom:8px">Sin resultados</h3><p>Intenta con otra búsqueda</p></div>';
+    return;
+  }
+
+  const badgeClass = { tecnologia:"tech", linea_blanca:"linea", electrodomesticos:"" };
+  const badgeLabel = { tecnologia:"Tecnología", linea_blanca:"Línea Blanca", electrodomesticos:"Electrodomésticos" };
+
+  products.forEach(p => {
+    const img  = p.image || "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&h=300&fit=crop";
+    const cat  = p.category || "";
+    const low  = p.existencias > 0 && p.existencias <= 3;
+    const name = (p.nombre || "").replace(/'/g, "\\'");
+
+    container.innerHTML += `
+      <div class="card">
+        <div class="card-img-wrap">
+          <img src="${img}" alt="${p.nombre}" loading="lazy">
+          ${cat ? `<span class="badge ${badgeClass[cat] || ''}">${badgeLabel[cat] || cat}</span>` : ''}
+          ${low ? `<span class="stock-low">¡Últimas ${p.existencias}!</span>` : ''}
+        </div>
+        <div class="card-body">
+          <h4>${p.nombre}</h4>
+          <p class="price">$${Number(p.precio).toFixed(2)}</p>
+          <button class="add-btn" onclick="addToCart('${p._id}','${name}',${p.precio},'${cat}')">
+            + Agregar al carrito
+          </button>
+        </div>
+      </div>`;
+  });
+}
+
+// ── Filtrar por categoría ──
+function filterCategory(cat, btn) {
+  document.querySelectorAll("nav button").forEach(b => b.classList.remove("active"));
+  if (btn) btn.classList.add("active");
+  const val = searchInput.value.toLowerCase();
+  let f = cat === "todos" ? allProducts : allProducts.filter(p => p.category === cat);
+  if (val) f = f.filter(p => (p.nombre || "").toLowerCase().includes(val));
+  renderProducts(f);
+}
+
+// ── Buscador ──
+searchInput.addEventListener("input", () => {
+  const active = document.querySelector("nav button.active");
+  const cat = active ? active.dataset.cat : "todos";
+  filterCategory(cat, active);
+});
+
+// ── Agregar al carrito ──
+function addToCart(id, nombre, precio, category) {
+  const item = cart.find(p => p.id === id);
+  if (item) item.quantity++;
+  else cart.push({ id, name: nombre, price: precio, category, quantity: 1 });
+  localStorage.setItem("cart", JSON.stringify(cart));
+  updateCartCount();
+  showToast("✓ " + nombre + " agregado");
+}
+
+function updateCartCount() {
+  cartCount.textContent = cart.reduce((a, p) => a + p.quantity, 0);
+}
+
+function showToast(msg) {
+  toast.textContent = msg;
+  toast.classList.add("show");
+  setTimeout(() => toast.classList.remove("show"), 2500);
+}
+
+// ── Iniciar ──
+loadProducts();
+updateCartCount();
+</script>
+</body>
+</html>

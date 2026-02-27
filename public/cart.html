@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Carrito | Tony's Company</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root{--black:#111111;--green:#1e8a3c;--green2:#25a849;--gray:#6b7280;--light:#f5f5f5;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Barlow',sans-serif;background:var(--light);color:var(--black);}
+    header{background:var(--black);padding:0 30px;display:flex;justify-content:space-between;align-items:center;height:70px;box-shadow:0 2px 12px rgba(0,0,0,0.4);}
+    .logo-wrap img{height:46px;background:white;padding:4px 8px;border-radius:8px;}
+    header a{color:white;text-decoration:none;font-weight:600;font-size:14px;display:flex;align-items:center;gap:6px;}
+    header a:hover{color:var(--green);}
+    main{max-width:900px;margin:50px auto;padding:0 24px;}
+    .page-title{font-family:'Barlow Condensed',sans-serif;font-size:38px;font-weight:900;text-transform:uppercase;margin-bottom:30px;}
+    .page-title span{color:var(--green);}
+    .cart-item{background:white;border-radius:10px;padding:20px;box-shadow:0 4px 18px rgba(0,0,0,0.08);margin-bottom:16px;display:flex;align-items:center;gap:20px;}
+    .item-info{flex:1;}
+    .item-info h4{font-size:16px;font-weight:600;margin-bottom:4px;}
+    .item-price{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;color:var(--green);}
+    .qty-controls{display:flex;align-items:center;gap:10px;}
+    .qty-btn{width:36px;height:36px;border:2px solid #e5e7eb;background:white;border-radius:6px;font-size:18px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;}
+    .qty-btn:hover{border-color:var(--green);color:var(--green);}
+    .qty-num{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;width:30px;text-align:center;}
+    .remove-btn{background:none;border:none;color:#dc2626;font-size:20px;cursor:pointer;padding:6px;border-radius:6px;transition:background 0.15s;}
+    .remove-btn:hover{background:#fee2e2;}
+    .summary-box{background:white;border-radius:10px;padding:24px;box-shadow:0 4px 18px rgba(0,0,0,0.08);margin-top:24px;}
+    .summary-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f3f4f6;font-size:15px;}
+    .summary-row:last-of-type{border-bottom:none;}
+    .summary-total{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;}
+    .checkout-btn{width:100%;padding:16px;background:var(--green);color:white;border:none;border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;letter-spacing:1px;cursor:pointer;text-transform:uppercase;margin-top:16px;transition:background 0.2s;}
+    .checkout-btn:hover{background:var(--green2);}
+    .empty-state{text-align:center;padding:80px 20px;color:var(--gray);}
+    .empty-state .icon{font-size:64px;margin-bottom:20px;}
+    .empty-state h3{font-size:24px;color:var(--black);margin-bottom:10px;}
+    .back-link{display:inline-block;margin-top:20px;background:var(--black);color:white;padding:12px 28px;border-radius:6px;text-decoration:none;font-weight:700;text-transform:uppercase;font-size:14px;}
+    .back-link:hover{background:var(--green);}
+    footer{background:var(--black);color:#888;text-align:center;padding:24px;margin-top:60px;font-size:14px;}
+  </style>
+</head>
+<body>
+<header>
+  <a href="index.html" class="logo-wrap">
+    <img src="/portada.JPG" alt="Tony's Company">
+  </a>
+  <a href="index.html">← Seguir comprando</a>
+</header>
+
+<main>
+  <h1 class="page-title">🛒 Tu <span>Carrito</span></h1>
+  <div id="cart-content"></div>
+</main>
+
+<footer>© 2026 Tony's Company</footer>
+
+<script>
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+const content = document.getElementById("cart-content");
+
+function render() {
+  if (!cart.length) {
+    content.innerHTML = `
+      <div class="empty-state">
+        <div class="icon">🛒</div>
+        <h3>Tu carrito está vacío</h3>
+        <p>Agrega productos desde el catálogo</p>
+        <a href="index.html" class="back-link">Ver productos</a>
+      </div>`;
+    return;
+  }
+
+  let items = "";
+  let subtotal = 0;
+  cart.forEach((item, i) => {
+    subtotal += item.price * item.quantity;
+    items += `
+      <div class="cart-item">
+        <div class="item-info">
+          <h4>${item.name}</h4>
+          <p class="item-price">$${(item.price * item.quantity).toFixed(2)}</p>
+          <small style="color:#9ca3af">$${Number(item.price).toFixed(2)} c/u</small>
+        </div>
+        <div class="qty-controls">
+          <button class="qty-btn" onclick="change(${i},-1)">−</button>
+          <span class="qty-num">${item.quantity}</span>
+          <button class="qty-btn" onclick="change(${i},1)">+</button>
+          <button class="remove-btn" onclick="remove(${i})">🗑</button>
+        </div>
+      </div>`;
+  });
+
+  const total = subtotal;
+  content.innerHTML = items + `
+    <div class="summary-box">
+      <div class="summary-row"><span>Subtotal (${cart.reduce((a,p)=>a+p.quantity,0)} artículos)</span><span>$${subtotal.toFixed(2)}</span></div>
+      <div class="summary-row"><span>Envío</span><span style="color:var(--green);font-weight:600">A coordinar</span></div>
+      <div class="summary-row"><span style="font-weight:700">Total</span><span class="summary-total">$${total.toFixed(2)}</span></div>
+      <button class="checkout-btn" onclick="sendOrder()">📲 Enviar pedido por WhatsApp</button>
+      <a href="cotizacion.html" style="display:block;width:100%;padding:14px;margin-top:10px;background:#111;color:white;border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;letter-spacing:1px;text-align:center;text-decoration:none;text-transform:uppercase;transition:background 0.2s;" onmouseover="this.style.background='#1e8a3c'" onmouseout="this.style.background='#111'">📋 Solicitar Cotización</a>
+    </div>`;
+}
+
+function change(i, delta) {
+  cart[i].quantity += delta;
+  if (cart[i].quantity <= 0) cart.splice(i, 1);
+  save();
+}
+
+function remove(i) {
+  cart.splice(i, 1);
+  save();
+}
+
+function save() {
+  localStorage.setItem("cart", JSON.stringify(cart));
+  render();
+}
+
+async function sendOrder() {
+  if (!cart.length) { alert("Carrito vacío"); return; }
+  const total = cart.reduce((a,p)=>a+(p.price*p.quantity),0);
+  let msg = "🛒 *Nuevo pedido - Tony's Company*\n\n";
+  cart.forEach(p => { msg += `• ${p.name} x${p.quantity} = $${(p.price*p.quantity).toFixed(2)}\n`; });
+  msg += `\n💰 *Total: $${total.toFixed(2)}*`;
+
+  // Intentar guardar en backend
+  try {
+    await fetch("/api/orders", {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({items:cart})
+    });
+  } catch(e) {}
+
+  // Abrir WhatsApp
+  window.open("https://wa.me/?text=" + encodeURIComponent(msg), "_blank");
+  localStorage.removeItem("cart");
+  cart = [];
+  render();
+}
+
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Panel Admin — Tony's Company</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root{--black:#111111;--green:#1e8a3c;--green2:#25a849;--gray:#6b7280;--light:#f5f5f5;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Barlow',sans-serif;background:var(--light);}
+    header{background:var(--black);padding:0 30px;display:flex;justify-content:space-between;align-items:center;height:70px;}
+    .logo-wrap img{height:44px;background:white;padding:4px 8px;border-radius:8px;}
+    .header-right{display:flex;align-items:center;gap:16px;}
+    .header-right a{color:#aaa;text-decoration:none;font-size:14px;}
+    .header-right a:hover{color:white;}
+    .logout-btn{background:#dc2626;color:white;border:none;padding:8px 18px;border-radius:6px;font-weight:700;font-size:13px;cursor:pointer;}
+    .logout-btn:hover{background:#b91c1c;}
+    .page-wrap{max-width:1200px;margin:40px auto;padding:0 24px;}
+    .page-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:32px;}
+    .page-title{font-family:'Barlow Condensed',sans-serif;font-size:34px;font-weight:800;text-transform:uppercase;}
+    .page-title span{color:var(--green);}
+    .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:36px;}
+    .stat-card{background:white;border-radius:10px;padding:20px;box-shadow:0 4px 18px rgba(0,0,0,0.08);border-left:4px solid var(--green);}
+    .stat-card.orders{border-left-color:#1d4ed8;}
+    .stat-label{font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--gray);margin-bottom:6px;}
+    .stat-num{font-family:'Barlow Condensed',sans-serif;font-size:34px;font-weight:900;}
+    .card{background:white;border-radius:10px;padding:28px;box-shadow:0 4px 18px rgba(0,0,0,0.08);margin-bottom:30px;}
+    .card-title{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;text-transform:uppercase;margin-bottom:20px;display:flex;align-items:center;gap:10px;}
+    .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:16px;}
+    .form-group{display:flex;flex-direction:column;gap:6px;}
+    label{font-size:12px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;color:var(--gray);}
+    input,select{padding:10px 14px;border:2px solid #e5e7eb;border-radius:8px;font-family:'Barlow',sans-serif;font-size:14px;transition:border-color 0.2s;}
+    input:focus,select:focus{outline:none;border-color:var(--green);}
+    .btn{padding:10px 20px;border:none;border-radius:7px;font-family:'Barlow',sans-serif;font-weight:700;font-size:14px;cursor:pointer;transition:background 0.2s,transform 0.1s;letter-spacing:0.3px;}
+    .btn:hover{transform:translateY(-1px);}
+    .btn-green{background:var(--green);color:white;}
+    .btn-green:hover{background:var(--green2);}
+    .btn-edit{background:#f0fdf4;color:var(--green);border:1px solid var(--green);}
+    .btn-edit:hover{background:var(--green);color:white;}
+    .btn-delete{background:#fef2f2;color:#dc2626;border:1px solid #dc2626;}
+    .btn-delete:hover{background:#dc2626;color:white;}
+    .btn-cancel{background:#f3f4f6;color:#374151;}
+    table{width:100%;border-collapse:collapse;}
+    thead tr{background:var(--black);color:white;}
+    th{padding:13px 16px;text-align:left;font-size:12px;letter-spacing:1px;text-transform:uppercase;font-weight:700;}
+    td{padding:13px 16px;border-bottom:1px solid #f3f4f6;font-size:14px;}
+    tr:hover td{background:#f9fafb;}
+    .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase;}
+    .badge-tech{background:#dbeafe;color:#1d4ed8;}
+    .badge-linea{background:#ede9fe;color:#6d28d9;}
+    .badge-electro{background:#dcfce7;color:#16a34a;}
+    .td-actions{display:flex;gap:8px;}
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:200;display:none;align-items:center;justify-content:center;}
+    .modal-overlay.open{display:flex;}
+    .modal{background:white;border-radius:12px;padding:32px;width:480px;max-width:95vw;box-shadow:0 25px 60px rgba(0,0,0,0.3);}
+    .modal-title{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:800;text-transform:uppercase;margin-bottom:20px;}
+    .modal-actions{display:flex;gap:10px;margin-top:20px;}
+    .empty-row{text-align:center;color:var(--gray);padding:40px;}
+    .toast{position:fixed;bottom:24px;right:24px;background:var(--black);color:white;padding:14px 20px;border-radius:8px;font-size:14px;font-weight:600;border-left:4px solid var(--green);box-shadow:0 8px 25px rgba(0,0,0,0.3);transform:translateY(80px);opacity:0;transition:all 0.3s;z-index:999;}
+    .toast.show{transform:translateY(0);opacity:1;}
+    footer{background:var(--black);color:#555;text-align:center;padding:20px;font-size:13px;margin-top:40px;}
+  </style>
+</head>
+<body>
+<header>
+  <a href="index.html" class="logo-wrap">
+    <img src="/portada.JPG" alt="Tony's Company">
+  </a>
+  <div class="header-right">
+    <a href="index.html">← Ver tienda</a>
+    <button class="logout-btn" onclick="logout()">Cerrar sesión</button>
+  </div>
+</header>
+
+<div class="page-wrap">
+  <div class="page-header">
+    <h1 class="page-title">Panel <span>Admin</span></h1>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-label">Total Productos</div>
+      <div class="stat-num" id="stat-products">—</div>
+    </div>
+    <div class="stat-card orders">
+      <div class="stat-label">Total Pedidos</div>
+      <div class="stat-num" id="stat-orders">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">En stock</div>
+      <div class="stat-num" id="stat-stock">—</div>
+    </div>
+  </div>
+
+  <!-- FORM CREAR PRODUCTO -->
+  <div class="card">
+    <div class="card-title">➕ Agregar Producto</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Nombre</label>
+        <input type="text" id="nombre" placeholder="Ej: Smart TV 50''">
+      </div>
+      <div class="form-group">
+        <label>Precio ($)</label>
+        <input type="number" id="precio" placeholder="0.00" min="0" step="0.01">
+      </div>
+      <div class="form-group">
+        <label>Existencias</label>
+        <input type="number" id="existencias" placeholder="0" min="0">
+      </div>
+      <div class="form-group">
+        <label>Categoría</label>
+        <select id="categoria">
+          <option value="">Sin categoría</option>
+          <option value="tecnologia">Tecnología</option>
+          <option value="electrodomesticos">Electrodomésticos</option>
+          <option value="linea_blanca">Línea Blanca</option>
+        </select>
+      </div>
+      <div class="form-group" style="grid-column:1/-1">
+        <label>URL de imagen (opcional)</label>
+        <input type="text" id="imagen" placeholder="https://...">
+      </div>
+    </div>
+    <button class="btn btn-green" onclick="crearProducto()">✓ Crear producto</button>
+  </div>
+
+  <!-- TABLA PRODUCTOS -->
+  <div class="card">
+    <div class="card-title">📦 Productos</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Nombre</th><th>Precio</th><th>Stock</th><th>Categoría</th><th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="admin-products">
+        <tr><td colspan="5" class="empty-row">Cargando...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- TABLA PEDIDOS -->
+  <div class="card">
+    <div class="card-title">📋 Pedidos Recibidos</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Fecha</th><th>Artículos</th><th>Total</th><th>Estado</th>
+        </tr>
+      </thead>
+      <tbody id="admin-orders">
+        <tr><td colspan="4" class="empty-row">Cargando...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- MODAL EDITAR -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-title">✏️ Editar Producto</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Nombre</label>
+        <input type="text" id="e-nombre">
+      </div>
+      <div class="form-group">
+        <label>Precio ($)</label>
+        <input type="number" id="e-precio" min="0" step="0.01">
+      </div>
+      <div class="form-group">
+        <label>Existencias</label>
+        <input type="number" id="e-existencias" min="0">
+      </div>
+      <div class="form-group">
+        <label>Categoría</label>
+        <select id="e-categoria">
+          <option value="">Sin categoría</option>
+          <option value="tecnologia">Tecnología</option>
+          <option value="electrodomesticos">Electrodomésticos</option>
+          <option value="linea_blanca">Línea Blanca</option>
+        </select>
+      </div>
+      <div class="form-group" style="grid-column:1/-1">
+        <label>URL de imagen</label>
+        <input type="text" id="e-imagen">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-green" onclick="guardarEdicion()">Guardar cambios</button>
+      <button class="btn btn-cancel" onclick="closeModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<footer>© 2026 Tony's Company — Panel Administrativo</footer>
+<div class="toast" id="toast"></div>
+
+<script>
+const token = localStorage.getItem("token");
+if (!token) { alert("No autorizado"); window.location.href = "/login.html"; }
+
+let editingId = null;
+
+const badgeClass = {tecnologia:"badge-tech",linea_blanca:"badge-linea",electrodomesticos:"badge-electro"};
+const badgeLabel = {tecnologia:"Tecnología",linea_blanca:"Línea Blanca",electrodomesticos:"Electrodomésticos"};
+
+async function api(path, method="GET", body=null) {
+  const opts = { method, headers: { Authorization: "Bearer " + token, "Content-Type": "application/json" } };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch("/api" + path, opts);
+  return res.json();
+}
+
+async function cargarProductos() {
+  const productos = await api("/admin/products");
+  const tbody = document.getElementById("admin-products");
+  if (!Array.isArray(productos) || !productos.length) {
+    tbody.innerHTML = '<tr><td colspan="5" class="empty-row">No hay productos</td></tr>';
+    document.getElementById("stat-products").textContent = "0";
+    document.getElementById("stat-stock").textContent = "0";
+    return;
+  }
+  document.getElementById("stat-products").textContent = productos.length;
+  document.getElementById("stat-stock").textContent = productos.filter(p=>p.existencias>0).length;
+  tbody.innerHTML = productos.map(p => `
+    <tr>
+      <td><strong>${p.nombre}</strong></td>
+      <td style="font-weight:700;color:#1e8a3c">$${Number(p.precio).toFixed(2)}</td>
+      <td>${p.existencias}</td>
+      <td>${p.category?`<span class="badge ${badgeClass[p.category]||''}">${badgeLabel[p.category]||p.category}</span>`:'—'}</td>
+      <td>
+        <div class="td-actions">
+          <button class="btn btn-edit" onclick="openEdit('${p._id}','${(p.nombre||'').replace(/'/g,"\\'")}',${p.precio},${p.existencias},'${p.category||''}','${p.image||''}')">Editar</button>
+          <button class="btn btn-delete" onclick="eliminar('${p._id}')">Eliminar</button>
+        </div>
+      </td>
+    </tr>`).join("");
+}
+
+async function cargarPedidos() {
+  try {
+    const pedidos = await api("/orders");
+    const tbody = document.getElementById("admin-orders");
+    if (!Array.isArray(pedidos) || !pedidos.length) {
+      tbody.innerHTML = '<tr><td colspan="4" class="empty-row">No hay pedidos aún</td></tr>';
+      document.getElementById("stat-orders").textContent = "0";
+      return;
+    }
+    document.getElementById("stat-orders").textContent = pedidos.length;
+    tbody.innerHTML = pedidos.map(o => {
+      const total = (o.items||[]).reduce((a,i)=>a+(i.price*i.quantity),0);
+      return `<tr>
+        <td>${new Date(o.createdAt||Date.now()).toLocaleDateString('es-ES')}</td>
+        <td>${(o.items||[]).length} artículo(s)</td>
+        <td style="font-weight:700;color:#1e8a3c">$${total.toFixed(2)}</td>
+        <td><span class="badge badge-electro">Recibido</span></td>
+      </tr>`;
+    }).join("");
+  } catch(e) {
+    document.getElementById("admin-orders").innerHTML = '<tr><td colspan="4" class="empty-row">—</td></tr>';
+    document.getElementById("stat-orders").textContent = "0";
+  }
+}
+
+async function crearProducto() {
+  const nombre = document.getElementById("nombre").value.trim();
+  const precio = parseFloat(document.getElementById("precio").value);
+  const existencias = parseInt(document.getElementById("existencias").value);
+  const category = document.getElementById("categoria").value;
+  const image = document.getElementById("imagen").value.trim();
+
+  if (!nombre || isNaN(precio) || isNaN(existencias)) { showToast("❌ Completa los campos requeridos"); return; }
+
+  await api("/admin/products", "POST", {nombre,precio,existencias,category,image});
+  ["nombre","precio","existencias","imagen"].forEach(id => document.getElementById(id).value="");
+  document.getElementById("categoria").value="";
+  showToast("✓ Producto creado");
+  cargarProductos();
+}
+
+function openEdit(id, nombre, precio, existencias, category, image) {
+  editingId = id;
+  document.getElementById("e-nombre").value = nombre;
+  document.getElementById("e-precio").value = precio;
+  document.getElementById("e-existencias").value = existencias;
+  document.getElementById("e-categoria").value = category;
+  document.getElementById("e-imagen").value = image;
+  document.getElementById("modal").classList.add("open");
+}
+
+function closeModal() {
+  document.getElementById("modal").classList.remove("open");
+  editingId = null;
+}
+
+async function guardarEdicion() {
+  const nombre = document.getElementById("e-nombre").value.trim();
+  const precio = parseFloat(document.getElementById("e-precio").value);
+  const existencias = parseInt(document.getElementById("e-existencias").value);
+  const category = document.getElementById("e-categoria").value;
+  const image = document.getElementById("e-imagen").value.trim();
+
+  await api("/admin/products/" + editingId, "PUT", {nombre,precio,existencias,category,image});
+  closeModal();
+  showToast("✓ Producto actualizado");
+  cargarProductos();
+}
+
+async function eliminar(id) {
+  if (!confirm("¿Eliminar este producto?")) return;
+  await api("/admin/products/" + id, "DELETE");
+  showToast("🗑 Producto eliminado");
+  cargarProductos();
+}
+
+function logout() {
+  localStorage.removeItem("token");
+  window.location.href = "/login.html";
+}
+
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"),2500);
+}
+
+// Init
+cargarProductos();
+cargarPedidos();
+</script>
+</body>
+</html>

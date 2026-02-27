@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Cotización | Tony's Company</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- jsPDF para generar el PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
+  <style>
+    :root {
+      --black: #111111;
+      --green: #1e8a3c;
+      --green2: #25a849;
+      --gray: #6b7280;
+      --light: #f5f5f5;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Barlow', sans-serif; background: var(--light); color: var(--black); }
+
+    /* ── HEADER ── */
+    header {
+      background: var(--black);
+      padding: 0 36px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 68px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.5);
+    }
+    .logo-wrap img {
+      height: 42px; width: auto;
+      background: white; padding: 5px 14px;
+      border-radius: 8px; object-fit: contain;
+    }
+    header a.back {
+      color: #aaa; text-decoration: none;
+      font-size: 14px; font-weight: 600;
+      display: flex; align-items: center; gap: 6px;
+      transition: color 0.2s;
+    }
+    header a.back:hover { color: white; }
+
+    /* ── MAIN ── */
+    main { max-width: 960px; margin: 48px auto; padding: 0 24px; }
+
+    .page-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 38px; font-weight: 900;
+      text-transform: uppercase; margin-bottom: 6px;
+    }
+    .page-title span { color: var(--green); }
+    .page-sub { color: var(--gray); font-size: 14px; margin-bottom: 36px; }
+
+    .layout { display: grid; grid-template-columns: 1fr 380px; gap: 28px; }
+
+    /* ── CARD ── */
+    .card {
+      background: white; border-radius: 12px;
+      padding: 28px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      margin-bottom: 24px;
+    }
+    .card-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 20px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.5px;
+      margin-bottom: 20px;
+      display: flex; align-items: center; gap: 10px;
+      padding-bottom: 14px;
+      border-bottom: 2px solid #f3f4f6;
+    }
+    .card-title span { color: var(--green); }
+
+    /* ── FORMULARIO ── */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group.full { grid-column: 1 / -1; }
+    label {
+      font-size: 12px; font-weight: 700;
+      letter-spacing: 0.8px; text-transform: uppercase;
+      color: var(--gray);
+    }
+    input, textarea, select {
+      padding: 11px 14px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-family: 'Barlow', sans-serif;
+      font-size: 14px;
+      transition: border-color 0.2s;
+      color: var(--black);
+    }
+    input:focus, textarea:focus, select:focus {
+      outline: none; border-color: var(--green);
+    }
+    textarea { resize: vertical; min-height: 90px; }
+
+    /* ── PRODUCTOS EN COTIZACIÓN ── */
+    .quote-item {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      padding: 13px 0;
+      border-bottom: 1px solid #f3f4f6;
+      gap: 12px;
+    }
+    .quote-item:last-child { border-bottom: none; }
+    .qi-name { font-weight: 600; font-size: 15px; flex: 1; }
+    .qi-qty {
+      background: #f3f4f6; border-radius: 6px;
+      padding: 3px 12px; font-size: 13px;
+      font-weight: 700; color: var(--gray);
+      white-space: nowrap;
+    }
+    .qi-price {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 20px; font-weight: 800;
+      color: var(--green); white-space: nowrap;
+    }
+    .qi-remove {
+      background: none; border: none;
+      color: #dc2626; cursor: pointer;
+      font-size: 16px; padding: 4px 6px;
+      border-radius: 5px; transition: background 0.15s;
+    }
+    .qi-remove:hover { background: #fee2e2; }
+
+    .empty-msg {
+      text-align: center; padding: 40px 20px;
+      color: #bbb;
+    }
+    .empty-msg .icon { font-size: 36px; margin-bottom: 10px; }
+
+    /* ── RESUMEN TOTAL ── */
+    .summary {
+      background: white; border-radius: 12px;
+      padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      position: sticky; top: 20px;
+    }
+    .summary-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 20px; font-weight: 800;
+      text-transform: uppercase; margin-bottom: 18px;
+      padding-bottom: 12px; border-bottom: 2px solid #f3f4f6;
+    }
+    .sum-row {
+      display: flex; justify-content: space-between;
+      padding: 9px 0; font-size: 14px;
+      border-bottom: 1px solid #f9f9f9;
+    }
+    .sum-row:last-of-type { border-bottom: none; }
+    .sum-label { color: var(--gray); }
+    .sum-total-row {
+      display: flex; justify-content: space-between;
+      padding: 14px 0 0; margin-top: 8px;
+      border-top: 2px solid #111;
+    }
+    .sum-total-label { font-weight: 700; font-size: 15px; }
+    .sum-total-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 32px; font-weight: 900; color: var(--green);
+    }
+
+    /* ── VALIDEZ ── */
+    .validity-badge {
+      background: #f0fdf4; border: 1px solid #bbf7d0;
+      border-radius: 8px; padding: 12px 16px;
+      font-size: 13px; color: #166534;
+      margin: 16px 0; text-align: center;
+      font-weight: 600;
+    }
+
+    /* ── BOTONES ── */
+    .btn-group { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+    .btn {
+      width: 100%; padding: 14px;
+      border: none; border-radius: 8px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 18px; font-weight: 800;
+      letter-spacing: 0.5px;
+      cursor: pointer; text-transform: uppercase;
+      display: flex; align-items: center;
+      justify-content: center; gap: 10px;
+      transition: all 0.2s;
+    }
+    .btn-whatsapp { background: #25d366; color: white; }
+    .btn-whatsapp:hover { background: #1ebe5c; transform: translateY(-1px); }
+    .btn-pdf { background: var(--black); color: white; }
+    .btn-pdf:hover { background: #333; transform: translateY(-1px); }
+    .btn-email { background: #f3f4f6; color: var(--black); border: 2px solid #e5e7eb; }
+    .btn-email:hover { border-color: var(--green); color: var(--green); }
+
+    /* ── NÚMERO DE COTIZACIÓN ── */
+    .quote-num {
+      background: var(--black); color: white;
+      border-radius: 8px; padding: 10px 16px;
+      font-size: 12px; font-weight: 600;
+      letter-spacing: 1px; text-align: center;
+      margin-bottom: 16px;
+    }
+    .quote-num span { color: var(--green); font-size: 16px; font-weight: 900; }
+
+    /* ── MODAL ÉXITO ── */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 200; display: none;
+      align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: white; border-radius: 16px;
+      padding: 44px 40px; text-align: center;
+      width: 420px; max-width: 95vw;
+      box-shadow: 0 30px 70px rgba(0,0,0,0.3);
+      animation: popIn 0.3s ease;
+    }
+    @keyframes popIn {
+      from { transform: scale(0.85); opacity: 0; }
+      to   { transform: scale(1);    opacity: 1; }
+    }
+    .modal-icon { font-size: 56px; margin-bottom: 16px; }
+    .modal h3 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 26px; font-weight: 900;
+      text-transform: uppercase; margin-bottom: 10px;
+    }
+    .modal p { color: var(--gray); font-size: 15px; line-height: 1.6; margin-bottom: 24px; }
+    .modal-btn {
+      display: inline-block; background: var(--green);
+      color: white; padding: 12px 32px;
+      border-radius: 8px; font-weight: 700;
+      font-size: 14px; cursor: pointer;
+      border: none; text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .modal-btn:hover { background: var(--green2); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--black); color: #666;
+      text-align: center; padding: 24px;
+      margin-top: 60px; font-size: 13px;
+      border-top: 3px solid var(--green);
+    }
+    footer a { color: var(--green); text-decoration: none; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .layout { grid-template-columns: 1fr; }
+      .form-grid { grid-template-columns: 1fr; }
+      .summary { position: static; }
+      header { padding: 0 18px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <a href="index.html" class="logo-wrap">
+    <img src="/portada.JPG" alt="Tony's Company">
+  </a>
+  <a href="cart.html" class="back">← Volver al carrito</a>
+</header>
+
+<!-- CONTENIDO -->
+<main>
+  <h1 class="page-title">📋 Solicitar <span>Cotización</span></h1>
+  <p class="page-sub">Completa los datos del cliente y te enviamos la cotización por WhatsApp o correo electrónico.</p>
+
+  <div class="layout">
+
+    <!-- COLUMNA IZQUIERDA -->
+    <div>
+
+      <!-- DATOS DEL CLIENTE -->
+      <div class="card">
+        <div class="card-title">👤 Datos del <span>Cliente</span></div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Nombre completo *</label>
+            <input type="text" id="cli-nombre" placeholder="Ej: Juan Pérez">
+          </div>
+          <div class="form-group">
+            <label>Empresa (opcional)</label>
+            <input type="text" id="cli-empresa" placeholder="Ej: Ferretería El Sol">
+          </div>
+          <div class="form-group">
+            <label>Teléfono / WhatsApp *</label>
+            <input type="tel" id="cli-telefono" placeholder="Ej: 0991234567">
+          </div>
+          <div class="form-group">
+            <label>Correo electrónico</label>
+            <input type="email" id="cli-email" placeholder="correo@ejemplo.com">
+          </div>
+          <div class="form-group">
+            <label>Ciudad</label>
+            <input type="text" id="cli-ciudad" placeholder="Ej: Guayaquil">
+          </div>
+          <div class="form-group">
+            <label>Tipo de entrega</label>
+            <select id="cli-entrega">
+              <option value="retiro">Retiro en local</option>
+              <option value="domicilio">Entrega a domicilio</option>
+              <option value="coordinar">A coordinar</option>
+            </select>
+          </div>
+          <div class="form-group full">
+            <label>Nota o mensaje adicional</label>
+            <textarea id="cli-nota" placeholder="Ej: Necesito los productos para el viernes, tengo presupuesto de $500..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- PRODUCTOS SELECCIONADOS -->
+      <div class="card">
+        <div class="card-title">📦 Productos <span>Seleccionados</span></div>
+        <div id="quote-items"></div>
+        <div style="text-align:center;margin-top:16px">
+          <a href="index.html" style="color:var(--green);font-size:13px;font-weight:600;text-decoration:none;">
+            + Agregar más productos
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- COLUMNA DERECHA — RESUMEN -->
+    <div>
+      <div class="summary">
+
+        <div class="quote-num">
+          COTIZACIÓN N° <span id="quote-number">#0001</span>
+        </div>
+
+        <div class="summary-title">Resumen</div>
+
+        <div id="summary-rows"></div>
+
+        <div class="sum-total-row">
+          <span class="sum-total-label">TOTAL ESTIMADO</span>
+          <span class="sum-total-num" id="total-display">$0.00</span>
+        </div>
+
+        <div class="validity-badge">
+          ✓ Cotización válida por <strong>7 días</strong>
+        </div>
+
+        <div class="btn-group">
+          <button class="btn btn-whatsapp" onclick="enviarWhatsApp()">
+            💬 Enviar por WhatsApp
+          </button>
+          <button class="btn btn-pdf" onclick="descargarPDF()">
+            📄 Descargar PDF
+          </button>
+          <button class="btn btn-email" onclick="enviarEmail()">
+            ✉️ Enviar por Correo
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2026 <a href="index.html">Tony's Company</a> — Cotizaciones profesionales</p>
+</footer>
+
+<!-- MODAL ÉXITO -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-icon">✅</div>
+    <h3 id="modal-title">¡Cotización Enviada!</h3>
+    <p id="modal-msg">Tu cotización fue enviada exitosamente. El cliente la recibirá en breve.</p>
+    <button class="modal-btn" onclick="closeModal()">Aceptar</button>
+  </div>
+</div>
+
+<script>
+// ── CARGAR CARRITO ──
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+// Número de cotización automático
+const quoteNum = "COT-" + Date.now().toString().slice(-6);
+document.getElementById("quote-number").textContent = quoteNum;
+
+// ── RENDERIZAR PRODUCTOS ──
+function renderItems() {
+  const container = document.getElementById("quote-items");
+  const summaryRows = document.getElementById("summary-rows");
+
+  if (!cart.length) {
+    container.innerHTML = `
+      <div class="empty-msg">
+        <div class="icon">🛒</div>
+        <p>No hay productos en el carrito.<br>
+        <a href="index.html" style="color:var(--green);font-weight:600">Ir al catálogo</a></p>
+      </div>`;
+    summaryRows.innerHTML = "";
+    document.getElementById("total-display").textContent = "$0.00";
+    return;
+  }
+
+  let itemsHTML = "";
+  let summaryHTML = "";
+  let total = 0;
+
+  cart.forEach((item, i) => {
+    const subtotal = item.price * item.quantity;
+    total += subtotal;
+
+    itemsHTML += `
+      <div class="quote-item">
+        <div class="qi-name">${item.name}</div>
+        <span class="qi-qty">x${item.quantity}</span>
+        <span class="qi-price">$${subtotal.toFixed(2)}</span>
+        <button class="qi-remove" onclick="removeItem(${i})" title="Quitar">✕</button>
+      </div>`;
+
+    summaryHTML += `
+      <div class="sum-row">
+        <span class="sum-label">${item.name}</span>
+        <span>$${subtotal.toFixed(2)}</span>
+      </div>`;
+  });
+
+  container.innerHTML = itemsHTML;
+  summaryRows.innerHTML = summaryHTML;
+  document.getElementById("total-display").textContent = "$" + total.toFixed(2);
+}
+
+function removeItem(i) {
+  cart.splice(i, 1);
+  localStorage.setItem("cart", JSON.stringify(cart));
+  renderItems();
+}
+
+// ── VALIDAR DATOS DEL CLIENTE ──
+function getDatosCliente() {
+  const nombre   = document.getElementById("cli-nombre").value.trim();
+  const telefono = document.getElementById("cli-telefono").value.trim();
+  const empresa  = document.getElementById("cli-empresa").value.trim();
+  const email    = document.getElementById("cli-email").value.trim();
+  const ciudad   = document.getElementById("cli-ciudad").value.trim();
+  const entrega  = document.getElementById("cli-entrega").value;
+  const nota     = document.getElementById("cli-nota").value.trim();
+
+  if (!nombre) {
+    alert("Por favor ingresa el nombre del cliente.");
+    document.getElementById("cli-nombre").focus();
+    return null;
+  }
+  if (!telefono) {
+    alert("Por favor ingresa el teléfono o WhatsApp del cliente.");
+    document.getElementById("cli-telefono").focus();
+    return null;
+  }
+  if (!cart.length) {
+    alert("No hay productos en la cotización.");
+    return null;
+  }
+
+  return { nombre, empresa, telefono, email, ciudad, entrega, nota };
+}
+
+// ── ENVIAR POR WHATSAPP ──
+function enviarWhatsApp() {
+  const cli = getDatosCliente();
+  if (!cli) return;
+
+  const total = cart.reduce((a, p) => a + (p.price * p.quantity), 0);
+  const fechaHoy = new Date().toLocaleDateString("es-ES", { day:"2-digit", month:"long", year:"numeric" });
+  const entregaLabel = { retiro:"Retiro en local", domicilio:"Entrega a domicilio", coordinar:"A coordinar" };
+
+  let msg = `📋 *COTIZACIÓN ${quoteNum}*\n`;
+  msg += `📅 Fecha: ${fechaHoy}\n`;
+  msg += `⏳ Válida por: 7 días\n\n`;
+
+  msg += `👤 *DATOS DEL CLIENTE*\n`;
+  msg += `• Nombre: ${cli.nombre}\n`;
+  if (cli.empresa) msg += `• Empresa: ${cli.empresa}\n`;
+  msg += `• Teléfono: ${cli.telefono}\n`;
+  if (cli.email) msg += `• Correo: ${cli.email}\n`;
+  if (cli.ciudad) msg += `• Ciudad: ${cli.ciudad}\n`;
+  msg += `• Entrega: ${entregaLabel[cli.entrega]}\n\n`;
+
+  msg += `📦 *PRODUCTOS COTIZADOS*\n`;
+  cart.forEach(p => {
+    msg += `• ${p.name} x${p.quantity} = $${(p.price * p.quantity).toFixed(2)}\n`;
+  });
+
+  msg += `\n💰 *TOTAL ESTIMADO: $${total.toFixed(2)}*\n\n`;
+
+  if (cli.nota) msg += `📝 Nota: ${cli.nota}\n\n`;
+
+  msg += `🏪 *Tony's Company*\n`;
+  msg += `_Tecnología & Electrodomésticos_`;
+
+  // Número de WhatsApp de Tony's Company — cámbialo por el tuyo
+  const numeroWhatsApp = "593999999999"; // ← CAMBIA ESTO por tu número real
+  window.open(`https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(msg)}`, "_blank");
+
+  showModal(
+    "✅ ¡WhatsApp Abierto!",
+    `La cotización ${quoteNum} para ${cli.nombre} está lista para enviar. Revisa WhatsApp y presiona enviar.`
+  );
+}
+
+// ── DESCARGAR PDF ──
+function descargarPDF() {
+  const cli = getDatosCliente();
+  if (!cli) return;
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  const total = cart.reduce((a, p) => a + (p.price * p.quantity), 0);
+  const fechaHoy = new Date().toLocaleDateString("es-ES", { day:"2-digit", month:"long", year:"numeric" });
+
+  // ── Encabezado ──
+  doc.setFillColor(17, 17, 17); // negro
+  doc.rect(0, 0, 210, 40, "F");
+
+  doc.setFillColor(30, 138, 60); // verde
+  doc.rect(0, 40, 210, 5, "F");
+
+  doc.setTextColor(255, 255, 255);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(22);
+  doc.text("TONY'S COMPANY", 20, 18);
+
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(170, 170, 170);
+  doc.text("Tecnología & Electrodomésticos", 20, 27);
+  doc.text("Cotización profesional", 20, 34);
+
+  // Número de cotización (derecha)
+  doc.setTextColor(30, 138, 60);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(13);
+  doc.text(quoteNum, 190, 18, { align: "right" });
+  doc.setTextColor(170, 170, 170);
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(9);
+  doc.text("Fecha: " + fechaHoy, 190, 26, { align: "right" });
+  doc.text("Válida por 7 días", 190, 33, { align: "right" });
+
+  // ── Datos del cliente ──
+  doc.setTextColor(17, 17, 17);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(11);
+  doc.text("DATOS DEL CLIENTE", 20, 58);
+
+  doc.setDrawColor(230, 230, 230);
+  doc.line(20, 61, 190, 61);
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(10);
+  doc.setTextColor(50, 50, 50);
+
+  let y = 70;
+  const entregaLabel = { retiro:"Retiro en local", domicilio:"Entrega a domicilio", coordinar:"A coordinar" };
+
+  const clienteInfo = [
+    ["Nombre:", cli.nombre],
+    cli.empresa ? ["Empresa:", cli.empresa] : null,
+    ["Teléfono:", cli.telefono],
+    cli.email ? ["Correo:", cli.email] : null,
+    cli.ciudad ? ["Ciudad:", cli.ciudad] : null,
+    ["Tipo de entrega:", entregaLabel[cli.entrega]],
+  ].filter(Boolean);
+
+  clienteInfo.forEach(([label, value]) => {
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(100, 100, 100);
+    doc.text(label, 20, y);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(17, 17, 17);
+    doc.text(value, 70, y);
+    y += 8;
+  });
+
+  if (cli.nota) {
+    y += 2;
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(100, 100, 100);
+    doc.text("Nota:", 20, y);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(17, 17, 17);
+    const notaLines = doc.splitTextToSize(cli.nota, 110);
+    doc.text(notaLines, 70, y);
+    y += notaLines.length * 7;
+  }
+
+  y += 6;
+
+  // ── Tabla de productos ──
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(11);
+  doc.setTextColor(17, 17, 17);
+  doc.text("PRODUCTOS COTIZADOS", 20, y + 6);
+  y += 10;
+
+  const tableRows = cart.map(p => [
+    p.name,
+    p.quantity,
+    "$" + Number(p.price).toFixed(2),
+    "$" + (p.price * p.quantity).toFixed(2)
+  ]);
+
+  doc.autoTable({
+    startY: y,
+    head: [["Producto", "Cant.", "Precio unitario", "Subtotal"]],
+    body: tableRows,
+    theme: "grid",
+    headStyles: {
+      fillColor: [17, 17, 17],
+      textColor: [255, 255, 255],
+      fontStyle: "bold",
+      fontSize: 10,
+    },
+    bodyStyles: { fontSize: 10, textColor: [30, 30, 30] },
+    alternateRowStyles: { fillColor: [248, 248, 248] },
+    columnStyles: {
+      0: { cellWidth: 85 },
+      1: { cellWidth: 20, halign: "center" },
+      2: { cellWidth: 40, halign: "right" },
+      3: { cellWidth: 40, halign: "right", fontStyle: "bold" },
+    },
+    margin: { left: 20, right: 20 },
+  });
+
+  // ── Total ──
+  const finalY = doc.lastAutoTable.finalY + 8;
+
+  doc.setFillColor(30, 138, 60);
+  doc.roundedRect(130, finalY, 60, 18, 3, 3, "F");
+  doc.setTextColor(255, 255, 255);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(11);
+  doc.text("TOTAL: $" + total.toFixed(2), 160, finalY + 12, { align: "center" });
+
+  // ── Pie de página ──
+  const pageH = doc.internal.pageSize.height;
+  doc.setFillColor(17, 17, 17);
+  doc.rect(0, pageH - 20, 210, 20, "F");
+  doc.setFillColor(30, 138, 60);
+  doc.rect(0, pageH - 20, 210, 2, "F");
+  doc.setTextColor(150, 150, 150);
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(9);
+  doc.text("Tony's Company — Tecnología & Electrodomésticos", 105, pageH - 10, { align: "center" });
+
+  // ── Descargar ──
+  doc.save(`Cotizacion_${quoteNum}_${cli.nombre.replace(/ /g,"_")}.pdf`);
+
+  showModal(
+    "📄 ¡PDF Generado!",
+    `La cotización ${quoteNum} fue descargada correctamente. Encuéntrala en tu carpeta de descargas.`
+  );
+}
+
+// ── ENVIAR POR CORREO ──
+function enviarEmail() {
+  const cli = getDatosCliente();
+  if (!cli) return;
+
+  if (!cli.email) {
+    alert("Por favor ingresa el correo electrónico del cliente para poder enviarlo.");
+    document.getElementById("cli-email").focus();
+    return;
+  }
+
+  const total = cart.reduce((a, p) => a + (p.price * p.quantity), 0);
+  const fechaHoy = new Date().toLocaleDateString("es-ES", { day:"2-digit", month:"long", year:"numeric" });
+
+  let body = `Estimado/a ${cli.nombre},\n\n`;
+  body += `Adjunto encontrará la cotización ${quoteNum} con fecha ${fechaHoy}.\n\n`;
+  body += `PRODUCTOS COTIZADOS:\n`;
+  cart.forEach(p => {
+    body += `• ${p.name} x${p.quantity} = $${(p.price * p.quantity).toFixed(2)}\n`;
+  });
+  body += `\nTOTAL ESTIMADO: $${total.toFixed(2)}\n\n`;
+  body += `Esta cotización es válida por 7 días.\n\n`;
+  body += `Para confirmar su pedido o aclarar cualquier duda, contáctenos por WhatsApp.\n\n`;
+  body += `Atentamente,\nTony's Company\nTecnología & Electrodomésticos`;
+
+  const mailtoLink = `mailto:${cli.email}?subject=Cotización ${quoteNum} - Tony's Company&body=${encodeURIComponent(body)}`;
+  window.location.href = mailtoLink;
+
+  showModal(
+    "✉️ ¡Correo Listo!",
+    `Se abrió tu cliente de correo con la cotización para ${cli.nombre}. Revisa y presiona Enviar.`
+  );
+}
+
+// ── MODAL ──
+function showModal(title, msg) {
+  document.getElementById("modal-title").textContent = title;
+  document.getElementById("modal-msg").textContent = msg;
+  document.getElementById("modal").classList.add("open");
+}
+function closeModal() {
+  document.getElementById("modal").classList.remove("open");
+}
+
+// ── INIT ──
+renderItems();
+</script>
+</body>
+</html>

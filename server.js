@@ -4,29 +4,65 @@ const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const path = require('path');
 
-const app = express();
-app.use(express.json());
-app.use(express.static('public'));
+// Rutas
 const orderRoutes = require("./routes/orderRoutes");
-app.use("/api/orders", orderRoutes);
+
+const app = express();
+const PORT = process.env.PORT || 5000;
 
 // --------------------
-// CONEXIÓN MONGO
+// MIDDLEWARES
+// --------------------
+app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
+
+// --------------------
+// CONEXIÓN A MONGODB
 // --------------------
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('MongoDB conectado correctamente'))
-  .catch(err => console.error(err));
+  .then(() => console.log('✅ MongoDB conectado correctamente'))
+  .catch(err => console.error('❌ Error MongoDB:', err));
 
 // --------------------
 // MODELO PRODUCTO
+// (Funciona, pero en un futuro debe ir a /models)
 // --------------------
-const Product = mongoose.model('Product', new mongoose.Schema({
-  nombre: { type: String, required: true },
-  precio: { type: Number, required: true },
-  existencias: { type: Number, default: 0 },
-  category: { type: String, enum: ['tecnologia', 'electrodomesticos', 'linea_blanca', ''], default: '' },
-  image: { type: String, default: '' }
-}, { timestamps: true }));
+const Product = mongoose.model(
+  'Product',
+  new mongoose.Schema(
+    {
+      nombre: { type: String, required: true },
+      precio: { type: Number, required: true },
+      existencias: { type: Number, default: 0 },
+      category: {
+        type: String,
+        enum: ['tecnologia', 'electrodomesticos', 'linea_blanca', ''],
+        default: ''
+      },
+      image: { type: String, default: '' }
+    },
+    { timestamps: true }
+  )
+);
+
+// --------------------
+// MIDDLEWARE AUTH ADMIN
+// --------------------
+function authAdmin(req, res, next) {
+  const header = req.headers.authorization;
+  if (!header) {
+    return res.status(403).json({ mensaje: 'Token requerido' });
+  }
+
+  const token = header.split(' ')[1];
+
+  try {
+    jwt.verify(token, process.env.JWT_SECRET);
+    next();
+  } catch (error) {
+    return res.status(401).json({ mensaje: 'Token inválido' });
+  }
+}
 
 // --------------------
 // LOGIN ADMIN
@@ -38,19 +74,34 @@ app.post('/api/login', (req, res) => {
     usuario === process.env.ADMIN_USER &&
     clave === process.env.ADMIN_PASS
   ) {
-    const token = jwt.sign({ role: 'admin' }, process.env.JWT_SECRET, {
-      expiresIn: '1h'
-    });
+    const token = jwt.sign(
+      { role: 'admin' },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
 
     return res.json({ token });
   }
 
-  res.status(401).json({ mensaje: 'Credenciales incorrectas' });
+  return res.status(401).json({ mensaje: 'Credenciales incorrectas' });
 });
 
 // --------------------
-// CREAR PRODUCTO (ADMIN)
+// PRODUCTOS (PÚBLICO)
 // --------------------
+app.get('/api/products', async (req, res) => {
+  const productos = await Product.find();
+  res.json(productos);
+});
+
+// --------------------
+// PRODUCTOS (ADMIN)
+// --------------------
+app.get('/api/admin/products', authAdmin, async (req, res) => {
+  const productos = await Product.find();
+  res.json(productos);
+});
+
 app.post('/api/admin/products', authAdmin, async (req, res) => {
   const { nombre, precio, existencias, category, image } = req.body;
 
@@ -64,15 +115,8 @@ app.post('/api/admin/products', authAdmin, async (req, res) => {
 
   await nuevoProducto.save();
   res.json({ mensaje: 'Producto creado', producto: nuevoProducto });
+});
 
-});
-app.get("/api/products", async (req, res) => {
-  const productos = await Product.find();
-  res.json(productos);
-});
-// --------------------
-// ACTUALIZAR PRODUCTO (ADMIN)
-// --------------------
 app.put('/api/admin/products/:id', authAdmin, async (req, res) => {
   const { nombre, precio, existencias, category, image } = req.body;
 
@@ -87,39 +131,19 @@ app.put('/api/admin/products/:id', authAdmin, async (req, res) => {
   res.json({ mensaje: 'Producto actualizado' });
 });
 
-// --------------------
-// MIDDLEWARE AUTH
-// --------------------
-function authAdmin(req, res, next) {
-  const header = req.headers.authorization;
-  if (!header) return res.status(403).json({ mensaje: 'Token requerido' });
-
-  const token = header.split(' ')[1];
-
-  try {
-    jwt.verify(token, process.env.JWT_SECRET);
-    next();
-  } catch {
-    res.status(401).json({ mensaje: 'Token inválido' });
-  }
-}
-
-// --------------------
-// PRODUCTOS (ADMIN)
-// --------------------
-app.get('/api/admin/products', authAdmin, async (req, res) => {
-  const productos = await Product.find();
-  res.json(productos);
-});
-
 app.delete('/api/admin/products/:id', authAdmin, async (req, res) => {
   await Product.findByIdAndDelete(req.params.id);
   res.json({ mensaje: 'Producto eliminado' });
 });
 
 // --------------------
-const PORT = process.env.PORT || 5000;
+// RUTAS DE ÓRDENES
+// --------------------
+app.use("/api/orders", orderRoutes);
 
+// --------------------
+// SERVIDOR
+// --------------------
 app.listen(PORT, () => {
-  console.log(`Servidor corriendo en puerto ${PORT}`);
+  console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
 });

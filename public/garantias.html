@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Garantías | Tony's Company</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root{--black:#111;--green:#1e8a3c;--green2:#25a849;--gray:#6b7280;--light:#f8f9fa;--border:#e5e7eb;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Barlow',sans-serif;background:var(--white);color:var(--black);}
+    header{background:var(--black);padding:0 32px;display:flex;justify-content:space-between;align-items:center;height:66px;box-shadow:0 2px 20px rgba(0,0,0,0.4);}
+    .logo-wrap img{height:44px;background:white;padding:5px 14px;border-radius:8px;object-fit:contain;}
+    header a.back{color:#aaa;text-decoration:none;font-size:14px;font-weight:600;display:flex;align-items:center;gap:6px;}
+    header a.back:hover{color:white;}
+    .hero-small{background:var(--black);padding:50px 32px;text-align:center;position:relative;border-bottom:3px solid var(--green);}
+    .hero-small::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(30,138,60,0.1) 0%,transparent 70%);}
+    .hero-small h1{font-family:'Barlow Condensed',sans-serif;font-size:clamp(32px,5vw,52px);font-weight:900;color:white;text-transform:uppercase;position:relative;z-index:1;}
+    .hero-small h1 span{color:var(--green);}
+    .hero-small p{color:#888;font-size:15px;margin-top:12px;position:relative;z-index:1;}
+    main{max-width:960px;margin:50px auto;padding:0 24px;}
+    .card{background:white;border-radius:12px;padding:32px;border:1px solid var(--border);margin-bottom:24px;box-shadow:0 2px 12px rgba(0,0,0,0.05);}
+    .card-icon{font-size:36px;margin-bottom:14px;}
+    .card h2{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:800;text-transform:uppercase;margin-bottom:14px;padding-bottom:12px;border-bottom:2px solid var(--border);}
+    .card h2 span{color:var(--green);}
+    .card p{color:#555;font-size:14px;line-height:1.8;margin-bottom:12px;}
+    .card ul{list-style:none;margin:12px 0;}
+    .card ul li{font-size:14px;color:#444;padding:8px 0;border-bottom:1px solid #f9f9f9;display:flex;align-items:flex-start;gap:10px;}
+    .card ul li::before{content:'✓';color:var(--green);font-weight:700;margin-top:1px;flex-shrink:0;}
+    .card ul li.x::before{content:'✗';color:#dc2626;}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+    .highlight{background:var(--green);color:white;padding:20px 24px;border-radius:10px;text-align:center;margin-top:16px;}
+    .highlight strong{display:block;font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:900;margin-bottom:4px;}
+    .highlight span{font-size:13px;opacity:0.85;}
+    .btn-wa{display:flex;align-items:center;justify-content:center;gap:10px;background:#25d366;color:white;padding:14px 28px;border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;text-transform:uppercase;text-decoration:none;margin-top:20px;transition:all 0.2s;}
+    .btn-wa:hover{background:#1ebe5c;transform:translateY(-2px);}
+    footer{background:var(--black);color:#555;text-align:center;padding:24px;border-top:3px solid var(--green);font-size:13px;margin-top:40px;}
+    footer a{color:var(--green);text-decoration:none;}
+    @media(max-width:768px){.grid-2{grid-template-columns:1fr;}header{padding:0 16px;}main{padding:0 16px;margin:30px auto;}}
+  </style>
+</head>
+<body>
+<header>
+  <a href="index.html" class="logo-wrap"><img src="/portada.JPG" alt="Tony's Company"></a>
+  <a href="index.html" class="back">← Volver al inicio</a>
+</header>
+
+<div class="hero-small">
+  <h1>🛡️ Política de <span>Garantías</span></h1>
+  <p>Tu compra está protegida. Conoce todos los detalles de nuestra garantía.</p>
+</div>
+
+<main>
+
+  <div class="card">
+    <div class="card-icon">🏆</div>
+    <h2>Garantía <span>Oficial de Fábrica</span></h2>
+    <p>Todos los productos vendidos en Tony's Company cuentan con <strong>garantía oficial del fabricante</strong>. Trabajamos exclusivamente con distribuidores autorizados para asegurarte productos 100% originales.</p>
+    <div class="grid-2">
+      <div class="highlight"><strong>12 meses</strong><span>Electrodomésticos y línea blanca</span></div>
+      <div class="highlight"><strong>6 meses</strong><span>Tecnología y accesorios</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-icon">✅</div>
+    <h2>¿Qué <span>Cubre</span> la Garantía?</h2>
+    <ul>
+      <li>Defectos de fabricación o materiales</li>
+      <li>Fallas eléctricas sin causa externa</li>
+      <li>Problemas de funcionamiento en condiciones normales de uso</li>
+      <li>Piezas y componentes defectuosos desde fábrica</li>
+      <li>Mano de obra para reparación en casos cubiertos</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-icon">❌</div>
+    <h2>¿Qué <span>NO Cubre</span>?</h2>
+    <ul>
+      <li class="x">Daños por mal uso o negligencia del usuario</li>
+      <li class="x">Golpes, caídas o daños físicos visibles</li>
+      <li class="x">Daños por humedad, líquidos o corrosión</li>
+      <li class="x">Modificaciones o reparaciones realizadas fuera del servicio autorizado</li>
+      <li class="x">Daños por variaciones eléctricas (se recomienda usar regulador)</li>
+      <li class="x">Consumibles como filtros, focos, pilas o partes de desgaste normal</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-icon">📋</div>
+    <h2>¿Cómo <span>Hacer Válida</span> la Garantía?</h2>
+    <p>El proceso es simple. Solo necesitas:</p>
+    <ul>
+      <li>Conservar tu factura o comprobante de compra</li>
+      <li>El producto debe estar dentro del período de garantía</li>
+      <li>El equipo no debe presentar daños físicos externos</li>
+    </ul>
+    <p style="margin-top:16px">Contáctanos por WhatsApp indicando tu nombre, número de factura y descripción del problema. Te indicaremos los pasos a seguir.</p>
+    <a href="https://wa.me/593978741347?text=Hola%2C%20necesito%20hacer%20v%C3%A1lida%20mi%20garant%C3%ADa.%20Mi%20nombre%20es..." target="_blank" class="btn-wa">💬 Activar garantía por WhatsApp</a>
+  </div>
+
+  <div class="card">
+    <div class="card-icon">🔄</div>
+    <h2>Política de <span>Cambios y Devoluciones</span></h2>
+    <p>Aceptamos cambios o devoluciones dentro de las <strong>primeras 48 horas</strong> después de recibido el producto, siempre que:</p>
+    <ul>
+      <li>El producto esté en su empaque original sin abrir o con señales mínimas de uso</li>
+      <li>Tenga todos sus accesorios y manuales originales</li>
+      <li>El motivo sea un defecto de fábrica comprobable</li>
+    </ul>
+    <p style="margin-top:12px;color:#888;font-size:13px;">* No se aceptan devoluciones por cambio de decisión una vez usado el producto.</p>
+  </div>
+
+</main>
+
+<footer>
+  <p>© 2026 <a href="index.html">Tony's Company</a> — <a href="terminos.html">Términos y Condiciones</a></p>
+</footer>
+</body>
+</html>

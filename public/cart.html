@@ -30,8 +30,8 @@
     .summary-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f3f4f6;font-size:15px;}
     .summary-row:last-of-type{border-bottom:none;}
     .summary-total{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;}
-    .checkout-btn{width:100%;padding:16px;background:var(--green);color:white;border:none;border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;letter-spacing:1px;cursor:pointer;text-transform:uppercase;margin-top:16px;transition:background 0.2s;}
-    .checkout-btn:hover{background:var(--green2);}
+    .cotizar-btn{display:block;width:100%;padding:16px;margin-top:16px;background:var(--black);color:white;border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;letter-spacing:1px;text-align:center;text-decoration:none;text-transform:uppercase;border:none;cursor:pointer;transition:background 0.2s;}
+    .cotizar-btn:hover{background:var(--green);}
     .empty-state{text-align:center;padding:80px 20px;color:var(--gray);}
     .empty-state .icon{font-size:64px;margin-bottom:20px;}
     .empty-state h3{font-size:24px;color:var(--black);margin-bottom:10px;}
@@ -41,6 +41,7 @@
   </style>
 </head>
 <body>
+
 <header>
   <a href="index.html" class="logo-wrap">
     <img src="/portada.JPG" alt="Tony's Company">
@@ -91,14 +92,12 @@ function render() {
       </div>`;
   });
 
-  const total = subtotal;
   content.innerHTML = items + `
     <div class="summary-box">
       <div class="summary-row"><span>Subtotal (${cart.reduce((a,p)=>a+p.quantity,0)} artículos)</span><span>$${subtotal.toFixed(2)}</span></div>
       <div class="summary-row"><span>Envío</span><span style="color:var(--green);font-weight:600">A coordinar</span></div>
-      <div class="summary-row"><span style="font-weight:700">Total</span><span class="summary-total">$${total.toFixed(2)}</span></div>
-      <button class="checkout-btn" onclick="sendOrder()">📲 Enviar pedido por WhatsApp</button>
-      <a href="cotizacion.html" style="display:block;width:100%;padding:14px;margin-top:10px;background:#111;color:white;border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;letter-spacing:1px;text-align:center;text-decoration:none;text-transform:uppercase;transition:background 0.2s;" onmouseover="this.style.background='#1e8a3c'" onmouseout="this.style.background='#111'">📋 Solicitar Cotización</a>
+      <div class="summary-row"><span style="font-weight:700">Total</span><span class="summary-total">$${subtotal.toFixed(2)}</span></div>
+      <a href="cotizacion.html" class="cotizar-btn">📋 Solicitar Cotización</a>
     </div>`;
 }
 
@@ -115,29 +114,6 @@ function remove(i) {
 
 function save() {
   localStorage.setItem("cart", JSON.stringify(cart));
-  render();
-}
-
-async function sendOrder() {
-  if (!cart.length) { alert("Carrito vacío"); return; }
-  const total = cart.reduce((a,p)=>a+(p.price*p.quantity),0);
-  let msg = "🛒 *Nuevo pedido - Tony's Company*\n\n";
-  cart.forEach(p => { msg += `• ${p.name} x${p.quantity} = $${(p.price*p.quantity).toFixed(2)}\n`; });
-  msg += `\n💰 *Total: $${total.toFixed(2)}*`;
-
-  // Intentar guardar en backend
-  try {
-    await fetch("/api/orders", {
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({items:cart})
-    });
-  } catch(e) {}
-
-  // Abrir WhatsApp
-  window.open("https://wa.me/?text=" + encodeURIComponent(msg), "_blank");
-  localStorage.removeItem("cart");
-  cart = [];
   render();
 }
 

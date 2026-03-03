@@ -88,61 +88,95 @@
     /* ══════════════════════════════
        HERO
     ══════════════════════════════ */
+    /* HERO MODERNO */
     .hero {
       background: var(--black);
-      display: flex; align-items: center;
-      justify-content: space-between;
-      padding: 60px 80px; gap: 60px;
-      min-height: 340px; position: relative; overflow: hidden;
+      min-height: 460px; position: relative; overflow: hidden;
+      display: flex; flex-direction: column;
     }
     .hero::before {
-      content: ''; position: absolute; inset: 0;
-      background: radial-gradient(ellipse at 70% 50%, rgba(30,138,60,0.15) 0%, transparent 65%);
+      content: ''; position: absolute; inset: 0; z-index: 0;
+      background: radial-gradient(ellipse at 75% 50%, rgba(30,138,60,0.18) 0%, transparent 60%),
+                  linear-gradient(135deg, #0a0a0a 0%, #111 50%, #0c1a10 100%);
     }
-    .hero::after {
-      content: ''; position: absolute;
-      left: 0; top: 0; bottom: 0; width: 4px;
-      background: var(--green);
+    .hero-content {
+      position: relative; z-index: 2;
+      display: flex; align-items: center;
+      justify-content: space-between;
+      padding: 56px 80px; gap: 60px; flex: 1;
     }
-    .hero-text { flex: 1; position: relative; z-index: 1; }
-    .hero-tag {
+    .hero-text { flex: 1; }
+    .hero-badge {
       display: inline-flex; align-items: center; gap: 8px;
-      font-size: 11px; font-weight: 700; letter-spacing: 3px;
-      text-transform: uppercase; color: var(--green); margin-bottom: 16px;
+      background: rgba(30,138,60,0.15); border: 1px solid rgba(30,138,60,0.35);
+      color: var(--green); padding: 6px 16px; border-radius: 25px;
+      font-size: 11px; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; margin-bottom: 22px;
     }
-    .hero-tag::before { content: ''; width: 20px; height: 2px; background: var(--green); }
+    .hero-badge::before {
+      content: ''; width: 7px; height: 7px; border-radius: 50%;
+      background: var(--green); animation: pulse-dot 1.5s infinite;
+    }
+    @keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:0.4} }
     .hero h1 {
       font-family: 'Barlow Condensed', sans-serif;
-      font-size: clamp(36px, 4.5vw, 62px); font-weight: 900;
-      color: white; line-height: 0.95;
-      text-transform: uppercase; margin-bottom: 18px;
+      font-size: clamp(42px, 5vw, 74px); font-weight: 900;
+      color: white; line-height: 0.88;
+      text-transform: uppercase; margin-bottom: 6px; letter-spacing: -1px;
     }
-    .hero h1 span { color: var(--green); }
-    .hero p { color: #999; font-size: 15px; line-height: 1.7; max-width: 420px; margin-bottom: 28px; }
+    .hero h1 .accent { color: var(--green); display: block; }
+    .hero h1 .sub { color: #444; display: block; font-size: 0.52em; letter-spacing: 5px; font-weight: 600; margin-top: 10px; }
+    .hero-line { width: 56px; height: 3px; background: var(--green); margin: 20px 0; border-radius: 2px; }
+    .hero p { color: #777; font-size: 15px; line-height: 1.75; max-width: 400px; margin-bottom: 30px; }
     .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; }
     .btn-primary {
       background: var(--green); color: white;
-      padding: 13px 28px; border-radius: 4px;
+      padding: 14px 30px; border-radius: 4px;
       font-weight: 700; font-size: 13px; text-decoration: none;
       text-transform: uppercase; letter-spacing: 1px;
       transition: all 0.2s; border: none; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 8px;
     }
-    .btn-primary:hover { background: var(--green2); transform: translateY(-2px); }
+    .btn-primary:hover { background: var(--green2); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(30,138,60,0.4); }
     .btn-outline {
       background: transparent; color: white;
-      padding: 13px 28px; border-radius: 4px;
+      padding: 14px 30px; border-radius: 4px;
       font-weight: 700; font-size: 13px; text-decoration: none;
       text-transform: uppercase; letter-spacing: 1px;
-      border: 2px solid #444; transition: all 0.2s;
+      border: 2px solid #2a2a2a; transition: all 0.2s;
+      display: inline-flex; align-items: center; gap: 8px;
     }
     .btn-outline:hover { border-color: var(--green); color: var(--green); }
-    .hero-logo { flex-shrink: 0; position: relative; z-index: 1; }
-    .hero-logo img {
-      width: clamp(150px, 14vw, 220px); height: auto;
-      background: white; padding: 18px 28px;
-      border-radius: 14px; object-fit: contain;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    .hero-right {
+      flex-shrink: 0; position: relative; z-index: 2;
+      display: flex; flex-direction: column; align-items: center; gap: 20px;
     }
+    .hero-logo-box {
+      background: white; padding: 22px 34px; border-radius: 16px;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.08), 0 28px 56px rgba(0,0,0,0.5);
+    }
+    .hero-logo-box img { width: clamp(150px, 14vw, 230px); height: auto; display: block; object-fit: contain; }
+    .hero-mini-stats {
+      display: flex; gap: 0;
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 10px; overflow: hidden; width: 100%;
+    }
+    .hms { flex: 1; padding: 12px 10px; text-align: center; border-right: 1px solid rgba(255,255,255,0.07); }
+    .hms:last-child { border-right: none; }
+    .hms-n { font-family: 'Barlow Condensed',sans-serif; font-size: 22px; font-weight: 900; color: var(--green); }
+    .hms-l { font-size: 10px; color: #555; text-transform: uppercase; letter-spacing: 1px; }
+    /* Banda verde inferior */
+    .hero-band {
+      position: relative; z-index: 2;
+      background: var(--green); display: flex; justify-content: center; flex-wrap: wrap;
+    }
+    .hero-band-item {
+      padding: 11px 36px; color: rgba(255,255,255,0.92);
+      font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+      border-right: 1px solid rgba(255,255,255,0.2);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .hero-band-item:last-child { border-right: none; }
 
     /* ══════════════════════════════
        ICONOS INFO
@@ -236,8 +270,25 @@
       font-family: 'Barlow Condensed', sans-serif;
       font-size: 34px; font-weight: 900; color: var(--green);
     }
-    .combo-payment { font-size: 12px; color: var(--gray); margin-bottom: 16px; }
+    .combo-payment { font-size: 12px; color: var(--gray); margin-bottom: 12px; }
     .combo-payment span { color: var(--green); font-weight: 700; }
+    .combo-vigencia {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 12px; border-radius: 6px; margin-bottom: 14px;
+      font-size: 12px; font-weight: 600;
+    }
+    .vig-active { background:#f0fdf4; border:1px solid #bbf7d0; color:#166534; }
+    .vig-soon   { background:#fff7ed; border:1px solid #fed7aa; color:#c2410c; }
+    .vig-expired{ background:#fef2f2; border:1px solid #fecaca; color:#dc2626; }
+    .combo-cotizar-btn {
+      display:block; width:100%; padding:12px; text-align:center;
+      background:var(--black); color:white; border:none; border-radius:6px;
+      font-family:'Barlow',sans-serif; font-weight:700; font-size:14px;
+      text-decoration:none; text-transform:uppercase; letter-spacing:0.5px;
+      cursor:pointer; transition:background 0.2s;
+    }
+    .combo-cotizar-btn:hover { background:var(--green); }
+    .combo-cotizar-btn.expired { background:#ccc; cursor:not-allowed; pointer-events:none; }
 
     /* ══════════════════════════════
        CATEGORÍAS NAV
@@ -291,7 +342,8 @@
     }
     .prod-body { padding: 16px; }
     .prod-brand { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--gray); margin-bottom: 4px; }
-    .prod-name { font-size: 15px; font-weight: 600; margin-bottom: 6px; line-height: 1.3; }
+    .prod-name { font-size: 15px; font-weight: 600; margin-bottom: 4px; line-height: 1.3; }
+    .prod-desc { font-size: 12px; color: #888; line-height: 1.5; margin-bottom: 8px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
     .prod-specs { margin-bottom: 10px; }
     .prod-specs span {
       display: inline-block; background: #f3f4f6;
@@ -542,11 +594,11 @@
     @media (max-width: 768px) {
       .header-top { padding: 0 16px; height: 58px; }
       .header-nav { padding: 0 16px; }
-      .hero { flex-direction: column; padding: 40px 20px; text-align: center; }
-      .hero::after { display: none; }
-      .hero-tag { justify-content: center; }
+      .hero-content { flex-direction: column; padding: 36px 20px; text-align: center; }
       .hero-btns { justify-content: center; }
-      .hero-logo img { width: 160px; }
+      .hero-badge { margin: 0 auto 18px; }
+      .hero-logo-box img { width: 160px; }
+      .hero-band-item { padding: 8px 16px; font-size: 11px; }
       .info-bar { padding: 16px; }
       .info-item { padding: 10px 16px; min-width: 140px; }
       .section { padding: 40px 16px; }
@@ -596,17 +648,37 @@
 
 <!-- ══ HERO ══ -->
 <div class="hero">
-  <div class="hero-text">
-    <p class="hero-tag">Calidad garantizada</p>
-    <h1>Tecnología &amp;<br><span>Electrodomésticos</span></h1>
-    <p>Los mejores productos para tu hogar con garantía oficial, crédito directo y entrega a domicilio en todo el país.</p>
-    <div class="hero-btns">
-      <a href="#productos" class="btn-primary">Ver catálogo →</a>
-      <a href="#credito" class="btn-outline">💳 Crédito directo</a>
+  <div class="hero-content">
+    <div class="hero-text">
+      <div class="hero-badge">Tienda oficial · Ecuador</div>
+      <h1>
+        Tecnología
+        <span class="accent">Electrodomésticos</span>
+        <span class="sub">— Línea Blanca —</span>
+      </h1>
+      <div class="hero-line"></div>
+      <p>Los mejores productos para tu hogar con garantía oficial, crédito directo y entrega a domicilio en todo el país.</p>
+      <div class="hero-btns">
+        <a href="#productos" class="btn-primary">Ver catálogo →</a>
+        <a href="#credito" class="btn-outline">💳 Crédito directo</a>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-logo-box">
+        <img src="/portada.JPG" alt="Tony's Company">
+      </div>
+      <div class="hero-mini-stats">
+        <div class="hms"><div class="hms-n">500+</div><div class="hms-l">Productos</div></div>
+        <div class="hms"><div class="hms-n">12</div><div class="hms-l">Marcas</div></div>
+        <div class="hms"><div class="hms-n">24h</div><div class="hms-l">Entrega</div></div>
+      </div>
     </div>
   </div>
-  <div class="hero-logo">
-    <img src="/portada.JPG" alt="Tony's Company">
+  <div class="hero-band">
+    <div class="hero-band-item">🚚 Envío a domicilio</div>
+    <div class="hero-band-item">🛡️ Garantía oficial</div>
+    <div class="hero-band-item">💳 Crédito directo</div>
+    <div class="hero-band-item">💬 Atención WhatsApp</div>
   </div>
 </div>
 
@@ -647,7 +719,7 @@
   <div class="section">
     <div class="section-head">
       <h2 class="section-title">🎁 Combos y <span>Ofertas</span></h2>
-      <span style="font-size:12px;color:var(--gray)">Actualizado por el admin</span>
+      <span id="combos-update" style="font-size:12px;color:var(--gray)"></span>
     </div>
     <div class="combos-grid" id="combos-container">
       <!-- Se cargan desde admin o demo -->
@@ -662,11 +734,22 @@
       <h2 class="section-title">📦 Productos <span>Disponibles</span></h2>
       <span class="results-count" id="results-count" style="font-size:13px;color:var(--gray)"></span>
     </div>
-    <div class="cat-nav">
+    <!-- Categorías principales -->
+    <div class="cat-nav" id="main-cats">
       <button class="cat-btn active" data-cat="todos" onclick="filterCat('todos',this)">Todos</button>
       <button class="cat-btn" data-cat="tecnologia" onclick="filterCat('tecnologia',this)">📱 Tecnología</button>
       <button class="cat-btn" data-cat="electrodomesticos" onclick="filterCat('electrodomesticos',this)">🍳 Electrodomésticos</button>
       <button class="cat-btn" data-cat="linea_blanca" onclick="filterCat('linea_blanca',this)">🏠 Línea Blanca</button>
+    </div>
+    <!-- Subcategorías de Tecnología (se muestran solo al seleccionar Tecnología) -->
+    <div id="sub-cats" style="display:none; flex-wrap:wrap; gap:8px; margin-bottom:20px; padding:12px 16px; background:#f8f9fa; border-radius:8px; border-left:4px solid var(--green);">
+      <span style="font-size:11px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:1px;align-self:center;margin-right:4px;">Subcategoría:</span>
+      <button class="cat-btn active" data-sub="todos" onclick="filterSub('todos',this)">Todos</button>
+      <button class="cat-btn" data-sub="celulares" onclick="filterSub('celulares',this)">📱 Celulares</button>
+      <button class="cat-btn" data-sub="tablets" onclick="filterSub('tablets',this)">📟 Tablets</button>
+      <button class="cat-btn" data-sub="pcs" onclick="filterSub('pcs',this)">💻 PCs y Laptops</button>
+      <button class="cat-btn" data-sub="tv" onclick="filterSub('tv',this)">📺 Televisores</button>
+      <button class="cat-btn" data-sub="audio" onclick="filterSub('audio',this)">🔊 Audio</button>
     </div>
     <div class="products-grid" id="products-container"></div>
   </div>
@@ -897,50 +980,69 @@ const WHATSAPP = "593978741347";
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 let allProducts = [];
 
-// ── COMBOS DEMO (admin los gestiona) ──
+// ── COMBOS — gestionados por admin ──
 const combosDemo = [
   {
     id:"c1", tag:"Combo Hogar", name:"Kit Cocina Completa",
     items:["Refrigeradora 18 pies","Cocina 4 quemadores","Microondas 1200W"],
     oldPrice:1200, newPrice:980, discount:"18%",
-    payment:"Desde $196 de entrada + cuotas desde $65/mes"
+    payment:"Desde $196 de entrada + cuotas desde $65/mes",
+    vigDesde:"2026-03-01", vigHasta:"2026-03-31"
   },
   {
     id:"c2", tag:"Combo Tecnología", name:"Home Entertainment",
     items:["Smart TV 55''","Soundbar 2.1","Soporte para TV"],
     oldPrice:850, newPrice:699, discount:"18%",
-    payment:"Desde $140 de entrada + cuotas desde $46/mes"
+    payment:"Desde $140 de entrada + cuotas desde $46/mes",
+    vigDesde:"2026-03-10", vigHasta:"2026-03-25"
   },
   {
     id:"c3", tag:"Combo Lavado", name:"Laundry Pro",
     items:["Lavadora 16kg","Secadora eléctrica","Jabón incluido x3"],
     oldPrice:900, newPrice:750, discount:"17%",
-    payment:"Desde $150 de entrada + cuotas desde $50/mes"
+    payment:"Desde $150 de entrada + cuotas desde $50/mes",
+    vigDesde:"2026-03-15", vigHasta:"2026-04-15"
   }
 ];
 
+function calcVigencia(desde, hasta) {
+  const hoy = new Date(); hoy.setHours(0,0,0,0);
+  const d = new Date(desde + "T00:00:00");
+  const h = new Date(hasta + "T00:00:00");
+  const fmt = d => d.toLocaleDateString("es-ES",{day:"numeric",month:"long"});
+  const dias = Math.ceil((h-hoy)/(1000*60*60*24));
+  if (hoy > h)  return { cls:"vig-expired", icon:"⛔", txt:"Oferta vencida", expired:true };
+  if (hoy < d)  return { cls:"vig-soon",    icon:"🕐", txt:"Válida del "+fmt(d)+" al "+fmt(h), expired:false };
+  if (dias <= 3) return { cls:"vig-soon",   icon:"🔥", txt:"¡Últimos "+dias+" días! Hasta el "+fmt(h), expired:false };
+  return { cls:"vig-active", icon:"✅", txt:"Válida hasta el "+fmt(h), expired:false };
+}
+
 function renderCombos() {
-  const c = document.getElementById("combos-container");
-  c.innerHTML = combosDemo.map(combo => `
-    <div class="combo-card">
+  const cont = document.getElementById("combos-container");
+  const upd = document.getElementById("combos-update");
+  if (upd) upd.textContent = "Actualizado: " + new Date().toLocaleDateString("es-ES",{day:"2-digit",month:"long",year:"numeric"});
+  cont.innerHTML = combosDemo.map(combo => {
+    const v = calcVigencia(combo.vigDesde, combo.vigHasta);
+    const url = `cotizacion.html?combo=${encodeURIComponent(combo.name)}&precio=${combo.newPrice}`;
+    return `
+    <div class="combo-card" style="${v.expired?'opacity:0.55':''}">
       <span class="combo-badge">-${combo.discount}</span>
       <div class="combo-body">
         <div class="combo-tag">✦ ${combo.tag}</div>
         <div class="combo-name">${combo.name}</div>
-        <ul class="combo-items">
-          ${combo.items.map(i => `<li>${i}</li>`).join("")}
-        </ul>
+        <ul class="combo-items">${combo.items.map(i=>`<li>${i}</li>`).join("")}</ul>
         <div class="combo-prices">
           <span class="combo-old">$${combo.oldPrice}</span>
           <span class="combo-new">$${combo.newPrice}</span>
         </div>
         <div class="combo-payment">💳 <span>${combo.payment}</span></div>
-        <a href="https://wa.me/${WHATSAPP}?text=Hola%2C%20me%20interesa%20el%20combo%20${encodeURIComponent(combo.name)}"
-           target="_blank" class="btn-primary" style="display:block;text-align:center;text-decoration:none">
-          Quiero este combo →
+        <div class="combo-vigencia ${v.cls}">${v.icon} ${v.txt}</div>
+        <a href="${v.expired ? '#' : url}" class="combo-cotizar-btn ${v.expired?'expired':''}">
+          ${v.expired ? '⛔ Oferta vencida' : '📋 Solicitar cotización'}
         </a>
       </div>
-    </div>`).join("");
+    </div>`;
+  }).join("");
 }
 
 // ── PRODUCTOS ──
@@ -950,14 +1052,14 @@ async function loadProducts() {
     allProducts = await res.json();
   } catch(e) {
     allProducts = [
-      {_id:"p1",nombre:"Smart TV Samsung 55''",precio:550,category:"tecnologia",existencias:5,brand:"Samsung",specs:["55 pulgadas","4K Ultra HD","Smart TV"],image:"https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=400&h=300&fit=crop"},
-      {_id:"p2",nombre:"Refrigeradora LG 18 pies",precio:820,category:"linea_blanca",existencias:3,brand:"LG",specs:["18 pies³","No Frost","Inverter"],image:"https://images.unsplash.com/photo-1571175443880-49e1d25b2bc5?w=400&h=300&fit=crop"},
-      {_id:"p3",nombre:"Lavadora Samsung 16kg",precio:560,category:"linea_blanca",existencias:4,brand:"Samsung",specs:["16 kg","Inverter","12 programas"],image:"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop"},
-      {_id:"p4",nombre:"Laptop HP Core i5",precio:699,category:"tecnologia",existencias:6,brand:"HP",specs:["Core i5","8GB RAM","512GB SSD"],image:"https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400&h=300&fit=crop"},
-      {_id:"p5",nombre:"Microondas Panasonic 1200W",precio:120,category:"electrodomesticos",existencias:8,brand:"Panasonic",specs:["1200W","28 litros","Grill"],image:"https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=400&h=300&fit=crop"},
-      {_id:"p6",nombre:"Aire Acondicionado Hisense 12000BTU",precio:750,category:"linea_blanca",existencias:3,brand:"Hisense",specs:["12000 BTU","Inverter","WiFi"],image:"https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=400&h=300&fit=crop"},
-      {_id:"p7",nombre:"iPhone 15 128GB",precio:999,category:"tecnologia",existencias:5,brand:"Apple",specs:["128GB","6.1 pulgadas","5G"],image:"https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=400&h=300&fit=crop"},
-      {_id:"p8",nombre:"Licuadora Oster 6 velocidades",precio:75,category:"electrodomesticos",existencias:12,brand:"Oster",specs:["6 velocidades","600W","1.25 litros"],image:"https://images.unsplash.com/photo-1570222094114-d054a817e56b?w=400&h=300&fit=crop"},
+      {_id:"p1",nombre:"Smart TV Samsung 55''",precio:550,category:"tecnologia",subcategory:"tv",existencias:5,brand:"Samsung",specs:["55 pulgadas","4K Ultra HD","Smart TV"],descripcion:"Televisor 4K con sistema operativo Tizen, compatible con Netflix, YouTube y más. Ideal para cine en casa.",image:"https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=400&h=300&fit=crop"},
+      {_id:"p2",nombre:"Refrigeradora LG 18 pies",precio:820,category:"linea_blanca",existencias:3,brand:"LG",specs:["18 pies³","No Frost","Inverter"],descripcion:"Refrigeradora con compresor inverter de bajo consumo, sistema No Frost y acabado plateado elegante.",image:"https://images.unsplash.com/photo-1571175443880-49e1d25b2bc5?w=400&h=300&fit=crop"},
+      {_id:"p3",nombre:"Lavadora Samsung 16kg",precio:560,category:"linea_blanca",existencias:4,brand:"Samsung",specs:["16 kg","Inverter","12 programas"],descripcion:"Lavadora de carga frontal con motor inverter, 12 programas de lavado y tecnología EcoBubble.",image:"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop"},
+      {_id:"p4",nombre:"Laptop HP Core i5",precio:699,category:"tecnologia",subcategory:"pcs",existencias:6,brand:"HP",specs:["Core i5","8GB RAM","512GB SSD"],descripcion:"Laptop ultradelgada con procesador Intel Core i5 de 12va generación, pantalla Full HD y batería de larga duración.",image:"https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400&h=300&fit=crop"},
+      {_id:"p5",nombre:"Microondas Panasonic 1200W",precio:120,category:"electrodomesticos",existencias:8,brand:"Panasonic",specs:["1200W","28 litros","Grill"],descripcion:"Microondas con función grill y 10 niveles de potencia. Pantalla digital y control de tiempo preciso.",image:"https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=400&h=300&fit=crop"},
+      {_id:"p6",nombre:"Aire Acondicionado Hisense 12000BTU",precio:750,category:"linea_blanca",existencias:3,brand:"Hisense",specs:["12000 BTU","Inverter","WiFi"],descripcion:"Aire acondicionado con tecnología inverter, control por WiFi y filtro de purificación de aire.",image:"https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=400&h=300&fit=crop"},
+      {_id:"p7",nombre:"iPhone 15 128GB",precio:999,category:"tecnologia",subcategory:"celulares",existencias:5,brand:"Apple",specs:["128GB","6.1 pulgadas","5G"],descripcion:"iPhone 15 con chip A16 Bionic, cámara de 48MP y resistencia al agua IP68. Nuevo color negro titanio.",image:"https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=400&h=300&fit=crop"},
+      {_id:"p8",nombre:"Licuadora Oster 6 velocidades",precio:75,category:"electrodomesticos",existencias:12,brand:"Oster",specs:["6 velocidades","600W","1.25 litros"],descripcion:"Licuadora con jarra de vidrio resistente, 6 velocidades y función pulse para mejor control.",image:"https://images.unsplash.com/photo-1570222094114-d054a817e56b?w=400&h=300&fit=crop"},
     ];
   }
   renderProducts(allProducts);
@@ -989,6 +1091,7 @@ function renderProducts(products) {
         <div class="prod-body">
           ${p.brand ? `<div class="prod-brand">${p.brand}</div>` : ''}
           <div class="prod-name">${p.nombre}</div>
+          ${p.descripcion ? `<div class="prod-desc">${p.descripcion}</div>` : ''}
           ${specs ? `<div class="prod-specs">${specs}</div>` : ''}
           <div class="prod-price">$${Number(p.precio).toFixed(2)}</div>
           <div class="prod-price-cuotas">💳 Desde $${cuota} de entrada</div>
@@ -998,19 +1101,41 @@ function renderProducts(products) {
   }).join("");
 }
 
+let currentCat = "todos";
+let currentSub = "todos";
+
 function filterCat(cat, btn) {
-  document.querySelectorAll(".cat-btn").forEach(b => b.classList.remove("active"));
+  document.querySelectorAll("#main-cats .cat-btn").forEach(b => b.classList.remove("active"));
   if (btn) btn.classList.add("active");
+  currentCat = cat;
+  currentSub = "todos";
+  // Reset subcats
+  document.querySelectorAll("#sub-cats .cat-btn").forEach(b => b.classList.remove("active"));
+  const firstSub = document.querySelector("#sub-cats .cat-btn[data-sub='todos']");
+  if (firstSub) firstSub.classList.add("active");
+  // Show/hide subcats for tecnologia
+  const subDiv = document.getElementById("sub-cats");
+  if (subDiv) subDiv.style.display = cat === "tecnologia" ? "flex" : "none";
+  applyFilters();
+}
+
+function filterSub(sub, btn) {
+  document.querySelectorAll("#sub-cats .cat-btn").forEach(b => b.classList.remove("active"));
+  if (btn) btn.classList.add("active");
+  currentSub = sub;
+  applyFilters();
+}
+
+function applyFilters() {
   const val = document.getElementById("search-input").value.toLowerCase();
-  let f = cat === "todos" ? allProducts : allProducts.filter(p => p.category === cat);
+  let f = allProducts;
+  if (currentCat !== "todos") f = f.filter(p => p.category === currentCat);
+  if (currentCat === "tecnologia" && currentSub !== "todos") f = f.filter(p => (p.subcategory||"") === currentSub);
   if (val) f = f.filter(p => (p.nombre||"").toLowerCase().includes(val));
   renderProducts(f);
 }
 
-document.getElementById("search-input").addEventListener("input", () => {
-  const active = document.querySelector(".cat-btn.active");
-  filterCat(active ? active.dataset.cat : "todos", active);
-});
+document.getElementById("search-input").addEventListener("input", applyFilters);
 
 function addToCart(id, nombre, precio, category) {
   const item = cart.find(p => p.id === id);
